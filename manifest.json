@@ -1,11 +1,10 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "obsidian-daily-note-navigation",
+	"name": "Obsidian Daily Note Navigation",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "This plugin allows you to navigate between daily notes in Obsidian.",
+	"author": "Andrei Senaev",
+	"authorUrl": "https://senaev.com",
 	"isDesktopOnly": false
 }

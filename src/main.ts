@@ -1,99 +1,162 @@
-import {App, Editor, MarkdownView, Modal, Notice, Plugin} from 'obsidian';
-import {DEFAULT_SETTINGS, MyPluginSettings, SampleSettingTab} from "./settings";
+import DailyNoteNavbar from 'dailyNoteNavbar/dailyNoteNavbar';
+import {App, Editor, MarkdownView, Modal, Notice, Plugin, TFile, WorkspaceLeaf} from 'obsidian';
+import { DailyNoteNavbarSettings, DEFAULT_SETTINGS } from 'settings';
+import { FileOpenType } from 'types';
+import { getDailyNoteFile, getDateFromFileName, hideChildren, selectNavbarFromView, showChildren } from 'utils';
 
-// Remember to rename these classes and interfaces!
-
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+export default class DailyNoteVavigationPlugin extends Plugin {
+	settings: DailyNoteNavbarSettings;
+	navbars: Record<string, DailyNoteNavbar> = {};
+	nextNavbarId = 0;
 
 	async onload() {
 		await this.loadSettings();
-
-		// This creates an icon in the left ribbon.
-		this.addRibbonIcon('dice', 'Sample', (evt: MouseEvent) => {
-			// Called when the user clicks the icon.
-			new Notice('This is a notice!');
-		});
-
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText('Status bar text');
-
-		// This adds a simple command that can be triggered anywhere
-		this.addCommand({
-			id: 'open-modal-simple',
-			name: 'Open modal (simple)',
-			callback: () => {
-				new SampleModal(this.app).open();
-			}
-		});
-		// This adds an editor command that can perform some operation on the current editor instance
-		this.addCommand({
-			id: 'replace-selected',
-			name: 'Replace selected content',
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				editor.replaceSelection('Sample editor command');
-			}
-		});
-		// This adds a complex command that can check whether the current state of the app allows execution of the command
-		this.addCommand({
-			id: 'open-modal-complex',
-			name: 'Open modal (complex)',
-			checkCallback: (checking: boolean) => {
-				// Conditions to check
-				const markdownView = this.app.workspace.getActiveViewOfType(MarkdownView);
-				if (markdownView) {
-					// If checking is true, we're simply "checking" if the command can be run.
-					// If checking is false, then we want to actually perform the operation.
-					if (!checking) {
-						new SampleModal(this.app).open();
-					}
-
-					// This command will only show up in Command Palette when the check function returns true
-					return true;
-				}
-				return false;
-			}
-		});
-
-		// This adds a settings tab so the user can configure various aspects of the plugin
-		this.addSettingTab(new SampleSettingTab(this.app, this));
-
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			new Notice("Click");
-		});
-
-		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
-
+		this.registerEvent(this.app.workspace.on("active-leaf-change", (leaf: WorkspaceLeaf) => {
+			this.addDailyNoteNavbar(leaf);
+		}));
+		this.registerEvent(this.app.workspace.on("css-change", () => this.rerenderNavbars()));
+		this.registerEvent(this.app.vault.on("create", () => this.rerenderNavbars()));
+		this.registerEvent(this.app.vault.on("rename", () => this.rerenderNavbars()));
+		this.registerEvent(this.app.vault.on("delete", () => this.rerenderNavbars()));
 	}
 
-	onunload() {
+	async addDailyNoteNavbar(leaf?: WorkspaceLeaf) {
+		if (!this.hasDependencies()) {
+			return;
+		}
+
+		// Check for markdown view and file
+		const markdownLeaves = this.app.workspace.getLeavesOfType("markdown");
+		if (!markdownLeaves.includes(leaf as WorkspaceLeaf)) {
+			return;
+		}
+
+		const view = (leaf as WorkspaceLeaf).view as MarkdownView;
+		const activeFile = view.file;
+		if (!activeFile) {
+			return;
+		}
+
+		// Get view header title container
+		const viewHeaderTitleContainers = view.containerEl.getElementsByClassName("view-header-title-container");
+		if (viewHeaderTitleContainers.length !== 1) {
+			return;
+		}
+		const titleContainerEl = viewHeaderTitleContainers[0] as HTMLElement;
+
+		// Get navbar if one is attached to the view
+		const navbarId = selectNavbarFromView(view);
+		const navbar = navbarId ? this.getNavbar(navbarId) : null;
+
+		// Check if file is a daily note file or a normal file
+		const fileDate = getDateFromFileName(activeFile.basename, this.settings.dailyNoteDateFormat);
+		if (!fileDate.isValid()) {
+			if (navbar) {
+				this.removeNavbar(navbar.id);
+				showChildren(titleContainerEl);
+			}
+			return;
+		}
+		
+		if (navbar) {
+			// Reuse navbar for new file
+			navbar.rerender();
+		} else {
+			hideChildren(titleContainerEl);
+			this.createNavbar(view, titleContainerEl, fileDate);
+		}
+	}
+
+	createNavbar(view: MarkdownView, parentEl: HTMLElement, fileDate: moment.Moment): DailyNoteNavbar {
+		const navbarId = `${this.nextNavbarId++}`;
+		const navbar = new DailyNoteNavbar(this, navbarId, view, parentEl, fileDate);
+		this.navbars[navbarId] = navbar;
+		return navbar;
+	}
+
+	removeNavbar(id: string) {
+		const navbar = this.navbars[id];
+
+
+		if (!navbar) {
+			throw new Error(`Navbar with id ${id} not found`);
+		}
+		
+		navbar.parentEl.removeChild(navbar.containerEl);
+		delete this.navbars[id];
+	}
+
+	getNavbar(id: string): DailyNoteNavbar | undefined {
+		return this.navbars[id];
+	}
+
+	rerenderNavbars() {
+		for (const navbar of Object.values(this.navbars)) {
+			navbar.rerender();
+		}
+	}
+
+	async openDailyNote(date: moment.Moment, openType: FileOpenType) {
+		const dailyNote = await getDailyNoteFile(date);
+		this.openFile(dailyNote, openType);
+	}
+
+	async openFile(file: TFile, openType: FileOpenType) {
+		switch (openType) {
+			case "New window":
+				await this.app.workspace
+					.getLeaf("window")
+					.openFile(file, { active: this.settings.setActive });
+				return;
+			case "New tab":
+				await this.app.workspace
+					.getLeaf("tab")
+					.openFile(file, { active: this.settings.setActive });
+				return;
+			case "Split right":
+				await this.app.workspace
+					.getLeaf("split", "vertical")
+					.openFile(file, { active: this.settings.setActive });
+				return;
+			case "Split down":
+				await this.app.workspace
+					.getLeaf("split", "horizontal")
+					.openFile(file, { active: this.settings.setActive });
+				return;
+			case "Active":
+				await this.app.workspace
+					.getLeaf()
+					.openFile(file, { active: true });
+				break;
+		}
+	}
+
+	hasDependencies() {
+		// @ts-ignore
+		const dailyNotesPlugin = this.app.internalPlugins.plugins["daily-notes"];
+		// @ts-ignore
+		const periodicNotes = this.app.plugins.getPlugin("periodic-notes");
+
+		if (!dailyNotesPlugin && !periodicNotes) {
+			new Notice("Daily Note Navbar: Install Periodic Notes or Daily Notes");
+			return false;
+		}
+
+		if (dailyNotesPlugin && dailyNotesPlugin.enabled) {
+			return true;
+		} else if (periodicNotes && periodicNotes.settings?.daily?.enabled) {
+			return true;
+		}
+
+		new Notice("Daily Note Navbar: Enable Periodic Notes or Daily Notes");
+		return false;
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData() as Partial<MyPluginSettings>);
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
 	}
 
 	async saveSettings() {
 		await this.saveData(this.settings);
-	}
-}
-
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
-
-	onOpen() {
-		let {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
-
-	onClose() {
-		const {contentEl} = this;
-		contentEl.empty();
 	}
 }
