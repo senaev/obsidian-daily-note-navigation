@@ -52,8 +52,11 @@ export default class DailyNoteNavbar {
 		this.headerEl.addClass("daily-note-navbar__header");
 		this.headerEl.addEventListener("click", () => {
 			this.weekOffset = 0;
-			void this.plugin.openDailyNote(moment(), "Active").then(() => {
+			this.plugin.openDailyNote(moment(), "Active").then(() => {
 				this.rerender();
+			})
+			.catch((error) => {
+				console.error(`obsidian-daily-note-navbar-v2 error for file=[${this.date.format("YYYY-MM-DD")}]`, error);
 			});
 		});        
 

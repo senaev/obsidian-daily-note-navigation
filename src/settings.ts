@@ -43,7 +43,7 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 					this.plugin.settings.dailyNoteDateFormat = value;
 					await this.plugin.saveSettings();
 					
-					void this.plugin.addDailyNoteNavbar();  
+					await this.plugin.addDailyNoteNavbar();  
 				}));
 
 		// Tooltip date format
@@ -59,7 +59,7 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 					}
 					this.plugin.settings.tooltipDateFormat = value;
 					await this.plugin.saveSettings();
-					void this.plugin.addDailyNoteNavbar();
+					await this.plugin.addDailyNoteNavbar();
 				}));
 	}
 }
