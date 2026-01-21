@@ -1,7 +1,7 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
-import { FirstDayOfWeek, FIRST_DAY_OF_WEEK, FileOpenType, FILE_OPEN_TYPES } from "./types";
-import { toRecord } from "./utils";
 import DailyNoteBarPlugin from "./main";
+import { FILE_OPEN_TYPES, FIRST_DAY_OF_WEEK, FileOpenType, FirstDayOfWeek } from "./types";
+import { toRecord } from "./utils";
 
 export interface DailyNoteNavbarSettings {
 	tooltipDateFormat: string;
@@ -50,7 +50,8 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 					}
 					this.plugin.settings.dailyNoteDateFormat = value;
 					await this.plugin.saveSettings();
-					this.plugin.addDailyNoteNavbar();
+					
+					void this.plugin.addDailyNoteNavbar();  
 				}));
 
 		// Tooltip date format
@@ -66,7 +67,7 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 					}
 					this.plugin.settings.tooltipDateFormat = value;
 					await this.plugin.saveSettings();
-					this.plugin.addDailyNoteNavbar();
+					void this.plugin.addDailyNoteNavbar();
 				}));
 
 		// First day of week
@@ -79,7 +80,7 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 				.onChange(async (value: FirstDayOfWeek) => {
 					this.plugin.settings.firstDayOfWeek = value;
 					await this.plugin.saveSettings();
-					this.plugin.addDailyNoteNavbar();
+					void this.plugin.addDailyNoteNavbar();
 				}));
 
 		// Set active
@@ -90,7 +91,7 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 				.setValue(this.plugin.settings.setActive)
 				.onChange(async value => {
 					this.plugin.settings.setActive = value;
-					this.plugin.saveSettings();
+					void this.plugin.saveSettings();
 				}));
 
 		// File open type
@@ -103,7 +104,7 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 				.onChange(async (value: FileOpenType) => {
 					this.plugin.settings.defaultOpenType = value;
 					await this.plugin.saveSettings();
-					this.plugin.addDailyNoteNavbar();
+					void this.plugin.addDailyNoteNavbar();
 				}));
 	}
 }

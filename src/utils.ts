@@ -1,6 +1,5 @@
 import { View, moment, TFile } from "obsidian";
 import { FirstDayOfWeek } from "./types";
-import DailyNoteNavbar from "./dailyNoteNavbar/dailyNoteNavbar";
 import { createDailyNote, getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
 
 /**

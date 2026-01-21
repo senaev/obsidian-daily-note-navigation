@@ -1,5 +1,5 @@
 import DailyNoteNavbar from 'dailyNoteNavbar/dailyNoteNavbar';
-import {App, Editor, MarkdownView, Modal, Notice, Plugin, TFile, WorkspaceLeaf} from 'obsidian';
+import { MarkdownView, Notice, Plugin, TFile, WorkspaceLeaf } from 'obsidian';
 import { DailyNoteNavbarSettings, DEFAULT_SETTINGS } from 'settings';
 import { FileOpenType } from 'types';
 import { getDailyNoteFile, getDateFromFileName, hideChildren, selectNavbarFromView, showChildren } from 'utils';
@@ -12,7 +12,7 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 	async onload() {
 		await this.loadSettings();
 		this.registerEvent(this.app.workspace.on("active-leaf-change", (leaf: WorkspaceLeaf) => {
-			this.addDailyNoteNavbar(leaf);
+			void this.addDailyNoteNavbar(leaf);
 		}));
 		this.registerEvent(this.app.workspace.on("css-change", () => this.rerenderNavbars()));
 		this.registerEvent(this.app.vault.on("create", () => this.rerenderNavbars()));
@@ -58,7 +58,7 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 			return;
 		}
 		
-		if (navbar) {
+		if (navbar) {    
 			// Reuse navbar for new file
 			navbar.rerender();
 		} else {
@@ -67,6 +67,7 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 		}
 	}
 
+	// eslint-disable-next-line no-undef
 	createNavbar(view: MarkdownView, parentEl: HTMLElement, fileDate: moment.Moment): DailyNoteNavbar {
 		const navbarId = `${this.nextNavbarId++}`;
 		const navbar = new DailyNoteNavbar(this, navbarId, view, parentEl, fileDate);
@@ -96,9 +97,10 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 		}
 	}
 
+	// eslint-disable-next-line no-undef
 	async openDailyNote(date: moment.Moment, openType: FileOpenType) {
 		const dailyNote = await getDailyNoteFile(date);
-		this.openFile(dailyNote, openType);
+		void this.openFile(dailyNote, openType);
 	}
 
 	async openFile(file: TFile, openType: FileOpenType) {
@@ -132,28 +134,30 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 	}
 
 	hasDependencies() {
-		// @ts-ignore
-		const dailyNotesPlugin = this.app.internalPlugins.plugins["daily-notes"];
-		// @ts-ignore
-		const periodicNotes = this.app.plugins.getPlugin("periodic-notes");
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+		const dailyNotesPlugin = (this.app as any).internalPlugins.plugins["daily-notes"] as Plugin | undefined;
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+		const periodicNotes = (this.app as any).plugins.getPlugin("periodic-notes") as Plugin | undefined;
 
 		if (!dailyNotesPlugin && !periodicNotes) {
-			new Notice("Daily Note Navbar: Install Periodic Notes or Daily Notes");
+			new Notice("Install eriodic notes or daily notes");
 			return false;
 		}
 
-		if (dailyNotesPlugin && dailyNotesPlugin.enabled) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+		if (dailyNotesPlugin && (dailyNotesPlugin as any).enabled) {
 			return true;
-		} else if (periodicNotes && periodicNotes.settings?.daily?.enabled) {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+		} else if (periodicNotes && (periodicNotes as any).settings?.daily?.enabled) {
 			return true;
 		}
 
-		new Notice("Daily Note Navbar: Enable Periodic Notes or Daily Notes");
+		new Notice("Enable periodic notes or daily notes");
 		return false;
 	}
 
 	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData()) as DailyNoteNavbarSettings;
 	}
 
 	async saveSettings() {
