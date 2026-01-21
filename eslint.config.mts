@@ -1,3 +1,4 @@
+import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 import obsidianmd from "eslint-plugin-obsidianmd";
 import { globalIgnores } from "eslint/config";
 import globals from "globals";
@@ -22,6 +23,10 @@ export default tseslint.config(
 		},
 		plugins: {
 			'@typescript-eslint': tseslint.plugin,
+			'eslint-comments': eslintComments,
+		},
+		rules: {
+			'eslint-comments/require-description': ['error', { ignore: [] }],
 		},
 	},
 	{

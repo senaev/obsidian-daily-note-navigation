@@ -69,7 +69,7 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 		}
 	}
 
-	// eslint-disable-next-line no-undef
+	// eslint-disable-next-line no-undef -- moment is defined in the global scope
 	createNavbar(view: MarkdownView, parentEl: HTMLElement, fileDate: moment.Moment): DailyNoteNavbar {
 		const navbarId = `${this.nextNavbarId++}`;
 		const navbar = new DailyNoteNavbar(this, navbarId, view, parentEl, fileDate);
@@ -99,10 +99,10 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 		}
 	}
 
-	// eslint-disable-next-line no-undef
+	// eslint-disable-next-line no-undef -- moment is defined in the global scope
 	async openDailyNote(date: moment.Moment, openType: FileOpenType) {
 		const dailyNote = await getDailyNoteFile(date);
-		
+
 		await this.openFile(dailyNote, openType);
 	}
 
@@ -137,9 +137,9 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 	}
 
 	hasDependencies() {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access -- any is used to access the internal plugins
 		const dailyNotesPlugin = (this.app as any).internalPlugins.plugins["daily-notes"] as Plugin | undefined;
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any -- any is used to access the plugins
 		const periodicNotes = (this.app as any).plugins.getPlugin("periodic-notes") as Plugin | undefined;
 
 		if (!dailyNotesPlugin && !periodicNotes) {
@@ -147,10 +147,10 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 			return false;
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access -- deprecated logic for daily notes
 		if (dailyNotesPlugin && (dailyNotesPlugin as any).enabled) {
 			return true;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access -- deprecated logic for periodic notes
 		} else if (periodicNotes && (periodicNotes as any).settings?.daily?.enabled) {
 			return true;
 		}
