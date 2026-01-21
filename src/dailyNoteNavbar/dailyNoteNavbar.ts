@@ -50,9 +50,13 @@ export default class DailyNoteNavbar {
 
 		this.headerEl = document.createElement("div");
 		this.headerEl.addClass("daily-note-navbar__header");
-		this.headerEl.addEventListener("click",  () => {   
-			void this.plugin.openDailyNote(moment(), "Active");
+		this.headerEl.addEventListener("click", () => {
+			this.weekOffset = 0;
+			void this.plugin.openDailyNote(moment(), "Active").then(() => {
+				this.rerender();
+			});
 		});        
+
 		this.containerEl.appendChild(this.headerEl);
 		
 		this.contentEl = document.createElement("div");
@@ -90,6 +94,7 @@ export default class DailyNoteNavbar {
 	}
 
 	rerender() {
+		console.log("rerender");
 		// Update date from view if it has changed
 		const activeFile = this.view.file;
 		const fileDate = activeFile ? getDateFromFileName(activeFile.basename, this.plugin.settings.dailyNoteDateFormat) : null;
