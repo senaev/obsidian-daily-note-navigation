@@ -137,21 +137,27 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 	}
 
 	hasDependencies() {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access -- any is used to access the internal plugins
-		const dailyNotesPlugin = (this.app as any).internalPlugins.plugins["daily-notes"] as Plugin | undefined;
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any -- any is used to access the plugins
-		const periodicNotes = (this.app as any).plugins.getPlugin("periodic-notes") as Plugin | undefined;
+		const dailyNotesPlugin = (this.app as unknown as  {
+			internalPlugins: {
+				plugins: {
+					"daily-notes": Plugin & { enabled: boolean };
+				}
+			}
+		}).internalPlugins.plugins["daily-notes"];
+		const periodicNotes = (this.app as unknown as {
+			plugins: {
+				getPlugin: (name: string) => (Plugin & { settings: { daily: { enabled: boolean } } }) | undefined;
+			}
+		}).plugins.getPlugin("periodic-notes");
 
 		if (!dailyNotesPlugin && !periodicNotes) {
-			new Notice("Install eriodic notes or daily notes");
+			new Notice("Install periodic notes or daily notes");
 			return false;
 		}
 
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access -- deprecated logic for daily notes
-		if (dailyNotesPlugin && (dailyNotesPlugin as any).enabled) {
+		if (dailyNotesPlugin && dailyNotesPlugin.enabled) {
 			return true;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access -- deprecated logic for periodic notes
-		} else if (periodicNotes && (periodicNotes as any).settings?.daily?.enabled) {
+		} else if (periodicNotes && periodicNotes.settings?.daily?.enabled) {
 			return true;
 		}
 
