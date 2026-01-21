@@ -3,7 +3,7 @@
 	"name": "Daily Note Navigation",
 	"version": "1.0.3",
 	"minAppVersion": "0.15.0",
-	"description": "This plugin allows you to navigate between daily notes in Obsidian.",
+	"description": "Allows you to navigate between daily notes in Obsidian.",
 	"author": "Andrei Senaev",
 	"authorUrl": "https://senaev.com",
 	"isDesktopOnly": false

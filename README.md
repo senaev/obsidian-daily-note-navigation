@@ -6,7 +6,7 @@ Adds a bar at the top of daily notes to quickly navigate between them.
 
 ## Getting Started
 
-This plugin replaces the view header in daily notes files with a navbar. The normal view header is still displayed for other files, and you can still rename daily note files both in the tab bar and in the file explorer.
+Replaces the view header in daily notes files with a navbar. The normal view header is still displayed for other files, and you can still rename daily note files both in the tab bar and in the file explorer.
 
 ## Inspiration
 
