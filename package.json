@@ -1,5 +1,5 @@
 {
-	"name": "obsidian-daily-note-navigation",
+	"name": "daily-note-navigation",
 	"version": "1.0.3",
 	"description": "This plugin allows you to navigate between daily notes in Obsidian.",
 	"main": "main.js",
