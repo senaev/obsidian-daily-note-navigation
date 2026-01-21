@@ -1,7 +1,7 @@
 {
 	"id": "obsidian-daily-note-navigation",
 	"name": "Obsidian Daily Note Navigation",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"minAppVersion": "0.15.0",
 	"description": "This plugin allows you to navigate between daily notes in Obsidian.",
 	"author": "Andrei Senaev",
