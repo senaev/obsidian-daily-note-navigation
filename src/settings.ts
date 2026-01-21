@@ -1,14 +1,9 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import DailyNoteBarPlugin from "./main";
-import { FILE_OPEN_TYPES, FIRST_DAY_OF_WEEK, FileOpenType, FirstDayOfWeek } from "./types";
-import { toRecord } from "./utils";
 
 export interface DailyNoteNavbarSettings {
 	tooltipDateFormat: string;
 	dailyNoteDateFormat: string;
-	firstDayOfWeek: FirstDayOfWeek;
-	defaultOpenType: FileOpenType;
-	setActive: boolean;
 }
 
 /**
@@ -17,9 +12,6 @@ export interface DailyNoteNavbarSettings {
 export const DEFAULT_SETTINGS: DailyNoteNavbarSettings = {
 	tooltipDateFormat: "YYYY-MM-DD",
 	dailyNoteDateFormat: "YYYY-MM-DD",
-	firstDayOfWeek: "Monday",
-	defaultOpenType: "Active",
-	setActive: true
 }
 
 /**
@@ -66,43 +58,6 @@ export class DailyNoteNavbarSettingTab extends PluginSettingTab {
 						value = DEFAULT_SETTINGS.tooltipDateFormat;
 					}
 					this.plugin.settings.tooltipDateFormat = value;
-					await this.plugin.saveSettings();
-					void this.plugin.addDailyNoteNavbar();
-				}));
-
-		// First day of week
-		new Setting(containerEl)
-			.setName('First day of week')
-			.setDesc('The first day in the daily note bar.')
-			.addDropdown(dropdown => dropdown
-				.addOptions(toRecord(FIRST_DAY_OF_WEEK.map((item) => item)))
-				.setValue(this.plugin.settings.firstDayOfWeek)
-				.onChange(async (value: FirstDayOfWeek) => {
-					this.plugin.settings.firstDayOfWeek = value;
-					await this.plugin.saveSettings();
-					void this.plugin.addDailyNoteNavbar();
-				}));
-
-		// Set active
-		new Setting(containerEl)
-			.setName('Open files as active')
-			.setDesc('Make files active when they are opened.')
-			.addToggle(toggle => toggle
-				.setValue(this.plugin.settings.setActive)
-				.onChange(async value => {
-					this.plugin.settings.setActive = value;
-					void this.plugin.saveSettings();
-				}));
-
-		// File open type
-		new Setting(containerEl)
-			.setName('Open in')
-			.setDesc('Where to open files.')
-			.addDropdown(dropdown => dropdown
-				.addOptions(toRecord(FILE_OPEN_TYPES.map((item) => item)))
-				.setValue(this.plugin.settings.defaultOpenType)
-				.onChange(async (value: FileOpenType) => {
-					this.plugin.settings.defaultOpenType = value;
 					await this.plugin.saveSettings();
 					void this.plugin.addDailyNoteNavbar();
 				}));

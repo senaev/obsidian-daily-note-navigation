@@ -1,6 +1,6 @@
 import DailyNoteNavbar from 'dailyNoteNavbar/dailyNoteNavbar';
 import { MarkdownView, Notice, Plugin, TFile, WorkspaceLeaf } from 'obsidian';
-import { DailyNoteNavbarSettings, DEFAULT_SETTINGS } from 'settings';
+import { DailyNoteNavbarSettings, DailyNoteNavbarSettingTab, DEFAULT_SETTINGS } from 'settings';
 import { FileOpenType } from 'types';
 import { getDailyNoteFile, getDateFromFileName, hideChildren, selectNavbarFromView, showChildren } from 'utils';
 
@@ -11,6 +11,8 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+		this.addSettingTab(new DailyNoteNavbarSettingTab(this.app, this));
+		
 		this.registerEvent(this.app.workspace.on("active-leaf-change", (leaf: WorkspaceLeaf) => {
 			void this.addDailyNoteNavbar(leaf);
 		}));
@@ -108,22 +110,22 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 			case "New window":
 				await this.app.workspace
 					.getLeaf("window")
-					.openFile(file, { active: this.settings.setActive });
+					.openFile(file, { active: true });
 				return;
 			case "New tab":
 				await this.app.workspace
 					.getLeaf("tab")
-					.openFile(file, { active: this.settings.setActive });
+					.openFile(file, { active: true });
 				return;
 			case "Split right":
 				await this.app.workspace
 					.getLeaf("split", "vertical")
-					.openFile(file, { active: this.settings.setActive });
+					.openFile(file, { active: true });
 				return;
 			case "Split down":
 				await this.app.workspace
 					.getLeaf("split", "horizontal")
-					.openFile(file, { active: this.settings.setActive });
+					.openFile(file, { active: true });
 				return;
 			case "Active":
 				await this.app.workspace

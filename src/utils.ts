@@ -1,5 +1,4 @@
 import { View, moment, TFile } from "obsidian";
-import { FirstDayOfWeek } from "./types";
 import { createDailyNote, getAllDailyNotes, getDailyNote } from 'obsidian-daily-notes-interface';
 
 /**
@@ -8,13 +7,8 @@ import { createDailyNote, getAllDailyNotes, getDailyNote } from 'obsidian-daily-
  * @param {moment.Moment} date - The date to get dates for.
  * @returns {moment.Moment[]} Returns the dates in the week.
  */
-export function getDatesInWeekByDate(date: moment.Moment, firstDayOfWeek: FirstDayOfWeek): moment.Moment[] {
+export function getDatesInWeekByDate(date: moment.Moment): moment.Moment[] {
 	let startOfWeek = date.clone().startOf('isoWeek');
-	if (firstDayOfWeek === "Sunday" && date.weekday() === 6) {
-		startOfWeek = date.clone();
-	} else if (firstDayOfWeek === "Sunday") {
-		startOfWeek.subtract(1, "day");
-	}
 
 	const daysInWeek = [];
 	for (let i = 0; i < 7; i++) {
@@ -55,18 +49,6 @@ export function showChildren(el: HTMLElement) {
 	for (let k = 0; k < el.children.length; k++) {
 		el.children[k]!.removeClass("daily-note-navbar__hidden");
 	}
-}
-
-/**
- * Converts array of strings into record.
- *
- * @param {string[]} arr - The array of strings to convert to record.
- * @return {Record<string, string>} Returns the created record.
- */
-export function toRecord(arr: string[]): Record<string, string> {
-	const recordObject: Record<string, string> = {};
-	arr.forEach(item => recordObject[item] = item)
-	return recordObject;
 }
 
 /**

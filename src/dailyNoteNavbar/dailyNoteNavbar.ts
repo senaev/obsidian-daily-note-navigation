@@ -101,7 +101,7 @@ export default class DailyNoteNavbar {
 		this.contentEl.replaceChildren();
 
 		const currentDate = moment();
-		const dates = getDatesInWeekByDate(this.date.clone().add(this.weekOffset, "week"), this.plugin.settings.firstDayOfWeek);
+		const dates = getDatesInWeekByDate(this.date.clone().add(this.weekOffset, "week"));
 
 		this.renderHeader(this.headerEl, dates[3]!);
 
@@ -161,7 +161,7 @@ export default class DailyNoteNavbar {
 					const openType = FILE_OPEN_TYPES_TO_PANE_TYPE[paneType];
 					await this.plugin.openDailyNote(date, openType);
 				} else if (event.type === "click") {
-					const openType = event.ctrlKey ? "New tab" : this.plugin.settings.defaultOpenType;
+					const openType = event.ctrlKey ? "New tab" : "Active";
 					// Skip as it is already open
 					const isActive = this.date.format("YYYY-MM-DD") === date.format("YYYY-MM-DD");
 					if (isActive && openType === "Active") {
