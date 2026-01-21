@@ -42,7 +42,7 @@ export function getDateFromFileName(basename: string, dateFormat: string): momen
  */
 export function hideChildren(el: HTMLElement) {
 	for (let k = 0; k < el.children.length; k++) {
-		el.children[k].addClass("daily-note-navbar__hidden");
+		el.children[k]!.addClass("daily-note-navbar__hidden");
 	}
 }
 
@@ -53,7 +53,7 @@ export function hideChildren(el: HTMLElement) {
  */
 export function showChildren(el: HTMLElement) {
 	for (let k = 0; k < el.children.length; k++) {
-		el.children[k].removeClass("daily-note-navbar__hidden");
+		el.children[k]!.removeClass("daily-note-navbar__hidden");
 	}
 }
 
@@ -89,7 +89,7 @@ export async function getDailyNoteFile(date: moment.Moment): Promise<TFile> {
 export function selectNavbarFromView(view: View): string | null {
 	const navbars = view.containerEl.getElementsByClassName("daily-note-navbar");
 	if (navbars.length > 0) {
-		const navbarEl = navbars[0];
+		const navbarEl = navbars[0]!;
 		return navbarEl.getAttribute("daily-note-navbar-id");
 	}
 	return null;
