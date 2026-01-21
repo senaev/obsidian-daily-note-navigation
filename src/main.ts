@@ -4,6 +4,8 @@ import { DailyNoteNavbarSettings, DailyNoteNavbarSettingTab, DEFAULT_SETTINGS } 
 import { FileOpenType } from 'types';
 import { getDailyNoteFile, getDateFromFileName, hideChildren, selectNavbarFromView, showChildren } from 'utils';
 
+declare type moment = typeof import('moment');
+
 export default class DailyNoteVavigationPlugin extends Plugin {
 	settings: DailyNoteNavbarSettings;
 	navbars: Record<string, DailyNoteNavbar> = {};
@@ -69,7 +71,6 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 		}
 	}
 
-	// eslint-disable-next-line no-undef -- moment is defined in the global scope
 	createNavbar(view: MarkdownView, parentEl: HTMLElement, fileDate: moment.Moment): DailyNoteNavbar {
 		const navbarId = `${this.nextNavbarId++}`;
 		const navbar = new DailyNoteNavbar(this, navbarId, view, parentEl, fileDate);
@@ -99,7 +100,6 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 		}
 	}
 
-	// eslint-disable-next-line no-undef -- moment is defined in the global scope
 	async openDailyNote(date: moment.Moment, openType: FileOpenType) {
 		const dailyNote = await getDailyNoteFile(date);
 
