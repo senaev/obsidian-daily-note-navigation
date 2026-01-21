@@ -8,12 +8,6 @@ Adds a bar at the top of daily notes to quickly navigate between them.
 
 This plugin replaces the view header in daily notes files with a navbar. The normal view header is still displayed for other files, and you can still rename daily note files both in the tab bar and in the file explorer.
 
-### Settings Tab
-
-With the settings tab you can customize how the dates are formatted.
-
-![daily note navbar settings page](https://github.com/karstenpedersen/obsidian-daily-note-bar/assets/53978294/6de31c12-6dfd-4785-a90b-7af3859abd40)
-
 ## Inspiration
 
 Inspired by and partly copied from https://github.com/karstenpedersen/obsidian-daily-note-navbar
