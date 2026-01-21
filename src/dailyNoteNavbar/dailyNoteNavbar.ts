@@ -94,7 +94,6 @@ export default class DailyNoteNavbar {
 	}
 
 	rerender() {
-		console.log("rerender");
 		// Update date from view if it has changed
 		const activeFile = this.view.file;
 		const fileDate = activeFile ? getDateFromFileName(activeFile.basename, this.plugin.settings.dailyNoteDateFormat) : null;
