@@ -10,17 +10,20 @@
 		"check": "tsc -noEmit",
 		"version": "node version-bump.mjs && git add manifest.json versions.json",
 		"lint": "eslint .",
-		"test": "echo \"no test specified\""
+		"test": "echo \"no test specified\"",
+		"release": "release-it"
 	},
 	"keywords": [],
 	"license": "0-BSD",
 	"devDependencies": {
 		"@eslint/js": "9.30.1",
+		"@release-it/bumper": "^7.0.5",
 		"@types/node": "^16.11.6",
 		"esbuild": "0.25.5",
 		"eslint-plugin-obsidianmd": "0.1.9",
 		"globals": "14.0.0",
 		"jiti": "2.6.1",
+		"release-it": "^19.2.4",
 		"tslib": "2.4.0",
 		"typescript": "^5.8.3",
 		"typescript-eslint": "8.35.1"
