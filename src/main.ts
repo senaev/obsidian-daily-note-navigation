@@ -15,8 +15,8 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 		await this.loadSettings();
 		this.addSettingTab(new DailyNoteNavbarSettingTab(this.app, this));
 		
-		this.registerEvent(this.app.workspace.on("active-leaf-change", async (leaf: WorkspaceLeaf) => {
-			await this.addDailyNoteNavbar(leaf);
+		this.registerEvent(this.app.workspace.on("active-leaf-change", (leaf: WorkspaceLeaf) => {
+			this.addDailyNoteNavbar(leaf);
 		}));
 		this.registerEvent(this.app.workspace.on("css-change", () => this.rerenderNavbars()));
 		this.registerEvent(this.app.vault.on("create", () => this.rerenderNavbars()));
@@ -24,7 +24,7 @@ export default class DailyNoteVavigationPlugin extends Plugin {
 		this.registerEvent(this.app.vault.on("delete", () => this.rerenderNavbars()));
 	}
 
-	async addDailyNoteNavbar(leaf?: WorkspaceLeaf): Promise<void> {
+	addDailyNoteNavbar(leaf?: WorkspaceLeaf): void {
 		if (!this.hasDependencies()) {
 			return;
 		}
